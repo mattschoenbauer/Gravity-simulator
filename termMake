@@ -1,0 +1,12 @@
+# Makefile for lab11
+
+termtest: termtest.cpp terminal.o
+	g++ -std=c++11 termtest.cpp gfx3_mac.o terminal.o -I/usr/X11/include/ -L/usr/X11/lib/ -lX11 -o term
+	rm terminal.o
+
+terminal.o: terminal.cpp
+	g++ -std=c++11 -c terminal.cpp -I/usr/X11/include/ -L/usr/X11/lib/ -lX11 -o terminal.o
+
+clean:
+	rm term terminal.o
+
