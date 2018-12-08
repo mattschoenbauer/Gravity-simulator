@@ -1,5 +1,8 @@
 //point_mass.h
 
+#ifndef POINT_MASS_H
+#define POINT_MASS_H
+
 #include <X11/Xlib.h>
 using namespace std;
 
@@ -32,3 +35,4 @@ class Mass {
 		double mass;
 };
 
+#endif
