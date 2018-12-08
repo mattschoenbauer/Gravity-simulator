@@ -1,29 +1,34 @@
 //point_mass.h
 
-#include<string>
-#include <fstream>
+#include <X11/Xlib.h>
 using namespace std;
 
-const int rad = 15;
+struct Vect {
+	int x,y;
+	Vect operator+(Vect v) { Vect u; u.x = x + v.x; u.y = y + v.y; return u; }
+};
 
 
-class Mass
-{
+class Mass {
 	public:
-		Board();
-		~Board();
-		void display(ostream&);
-		void display_blank(ostream&);
-		void edit(int,int,char);
-		char access(int,int);
-		bool isletter(int,int);
-		Word addfirstword(string);
-		Word addword(string);
-		Word check(int,int,string);
-		bool inbounds(int,int);
-
+		Mass();
+		Mass(XPoint center, double mass);
+		Mass(XPoint center, double mass, double radius);
+		XPoint getCenter(void);
+		Vect getVelocity(void);
+		Vect getAcceleration(void);
+		double getMass(void);
+		double getRadius(void);
+		double getDensity(void);
+		void draw(void);
+		void update(void);
+		void merge(Mass);
+		void compute_acceleration(Mass);
 	private:
-		char board[SIZE][SIZE];
-
+		XPoint center;
+		Vect veloc;
+		Vect accel;
+		double radius;
+		double mass;
 };
 
