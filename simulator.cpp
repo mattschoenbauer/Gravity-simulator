@@ -107,3 +107,15 @@ void interactive_initialize(list<Mass>& masslist){
 		masslist.push_back(m);
 	}
 }
+
+void batch_initialize(vector<Mass>&, istream&){
+
+}
+
+void draw_points(vector<Mass>){
+
+}
+
+void update(vector<Mass>&){
+
+}
