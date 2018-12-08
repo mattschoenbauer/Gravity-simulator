@@ -1,7 +1,7 @@
 # Makefile for lab11
 
 fractals: simulator.cpp point_mass.o
-	g++ simulator.cpp gfx3_mac.o point_mass.o -I/usr/X11/include/ -L/usr/X11/lib/ -lX11 -o grav
+	g++ -std=c++11 simulator.cpp gfx3_mac.o point_mass.o -I/usr/X11/include/ -L/usr/X11/lib/ -lX11 -o grav
 	rm point_mass.o
 
 point_mass.o: point_mass.cpp
