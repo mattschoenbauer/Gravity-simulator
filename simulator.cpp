@@ -11,10 +11,9 @@
 using namespace std;
 
 #define PI 3.14159265
-#define rad 80 //radius increment in spiral
 
 void interactive_initialize(vector<Mass>&);
-void batch_initialize(vector<Mass>&);
+void batch_initialize(vector<Mass>&, istream&);
 void draw_points(vector<Mass>);
 void update(vector<Mass>&);
 
@@ -40,7 +39,7 @@ int main(int argc, char *argv[]){
     if(option == "interactive"){
         cout << "Entering interactive mode\n";
 		cout << "Screen dimension are " << wid << " x " << ht << ".\n";
-		initialize(massvect,cin);
+		interactive_initialize(massvect,cin);
     }
 
     if(option == "batch"){
@@ -54,7 +53,7 @@ int main(int argc, char *argv[]){
             cout << endl;
             ifs.open(filename);
         }
-		initialize(massvect,ifs);
+		batch_initialize(massvect,ifs);
     }
 
 
@@ -74,6 +73,37 @@ int main(int argc, char *argv[]){
   return 0;
 }
 
-void initialize(vector<Mass>& massvect, istream& is){
-
+void interactive_initialize(list<Mass>& masslist){
+	bool finished = false;
+	int count = 1;
+	double cx, cy, vx, vy, mass, radius;
+	XPoint center;
+	Vect accel(0,0);
+	while(!finished){
+		cout << "Object " << count << endl << endl;
+		cout << "Input X Position Coordinate ";
+		cin << cx;
+		cout << endl << endl;
+		cout << "Input Y Position Coordinate ";
+		cin << cy;
+		cout << endl << endl;
+		center.x = cx;
+		center.y = cy;
+		cout << "Input Mass ";
+		cin << mass;
+		cout << endl << endl;
+		cout << "Input Radius ";
+		cin << radius;
+		cout << endl << endl;
+		cout << "Input X Velocity Coordinate ";
+		cin << vx;
+		cout << endl << endl;
+		cout << "Input Y Velocity Coordinate ";
+		cin << vy;
+		Vect veloc(vx,vy);
+		cout << endl << endl;
+		Mass m(center,mass,radius,veloc,accel);
+		count++;
+		masslist.push_back(m);
+	}
 }
