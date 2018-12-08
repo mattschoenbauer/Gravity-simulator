@@ -7,16 +7,24 @@
 using namespace std;
 
 struct Vect {
-	int x,y;
-	Vect operator+(Vect v) { Vect u; u.x = x + v.x; u.y = y + v.y; return u; }
+	double x,y;
+	Vect() { x = 0.; y = 0.; }
+	Vect(double x, double y) { this->x = x; this->y = y; }
+	Vect operator+(Vect v) { Vect u(x+v.x, y+v.y); return u; } 
 };
 
 
 class Mass {
 	public:
 		Mass();
-		Mass(XPoint center, double mass);
-		Mass(XPoint center, double mass, double radius);
+		~Mass();
+		Mass(XPoint center, double mass, double radius, Vect veloc, Vect accel);
+		void setMass(XPoint center, double mass, double radius, Vect veloc, Vect accel);
+		void setMa(double mass);
+		void setVeloc(Vect);
+		void setRadius(double);
+		void setCenter(XPoint);
+		void setAccel(Vect);
 		XPoint getCenter(void);
 		Vect getVelocity(void);
 		Vect getAcceleration(void);
@@ -29,10 +37,10 @@ class Mass {
 		void compute_acceleration(Mass);
 	private:
 		XPoint center;
-		Vect veloc;
-		Vect accel;
 		double radius;
 		double mass;
+		Vect veloc;
+		Vect accel;
 };
 
 #endif
