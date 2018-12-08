@@ -60,10 +60,22 @@ void Mass::update(void){
 	c.y = c.y + v.y;
 	v.x = v.x + a.x;
 	v.y = v.y + a.y;
+	setVelocity(v);
+	setCenter(c);
 }
 
 void Mass::merge(Mass m){
-	setMa(getMa
+	double new_mass = getMa() + m.getMa();
+	XPoint c = getCenter(), cc = m.getCenter();
+	Vect v = getVelocity(), vv = m.getVelocity();
+	c.x = (c.x * getMa() + cc.x * m.getMa())/(new_mass);
+	c.y = (c.y * getMa() + cc.y * m.getMa())/(new_mass);
+	v.x = (v.x * getMa() + vv.x * m.getMa())/(new_mass);
+	v.y = (v.y * getMa() + vv.y * m.getMa())/(new_mass);
+	setRadius(sqrt(pow(getRadius,2) + pow(m.getRadius(),2)));
+	setVelocity(v);
+	setCenter(c);
+	setMa(new_mass);
 }
 
 void Mass::compute_acceleration(Mass){
