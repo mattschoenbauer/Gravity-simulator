@@ -4,7 +4,7 @@
 #include <iostream>
 #include "gfx3.h"
 #include <cmath>
-#define GG 1
+#define GG 160000
 
 using namespace std;
 
@@ -52,7 +52,9 @@ void Mass::draw(void){
 	gfx_color(max_color * (density/average_density)/(1 + density/average_density),0,max_color * 1/(1 + density/average_density));
 	Vect center = getCenter();
 //	cout << getRadius() << endl;
+//	gfx_circle(center.x,center.y,getRadius());
 	gfx_fill_circle(center.x,center.y,getRadius());
+	gfx_flush();
 }
 
 void Mass::update(void){
@@ -60,10 +62,11 @@ void Mass::update(void){
 	Vect v = getVelocity(), a = getAcceleration();
 //	cout << "Position is " << c.x << "," << c.y << endl;
 //	cout << "Velocity is " << v.x << "," << v.y << endl;
-	c.x = c.x + v.x;
-	c.y = c.y + v.y;
-	v.x = v.x + a.x;
-	v.y = v.y + a.y;
+	double delta_t = .05;
+	c.x = c.x + delta_t*v.x + pow(delta_t,2)*a.x/2.;
+	c.y = c.y + delta_t*v.y + pow(delta_t,2)*a.y/2.;
+	v.x = v.x + delta_t*a.x;
+	v.y = v.y + delta_t*a.y;
 	setCenter(c);
 	setVeloc(v);
 //	cout << "Position is " << c.x << "," << c.y << endl;
