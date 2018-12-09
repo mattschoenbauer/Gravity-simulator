@@ -1,4 +1,5 @@
 //point_mass.h
+//Class implementation of circular objects
 
 #ifndef POINT_MASS_H
 #define POINT_MASS_H
@@ -31,10 +32,9 @@ class Mass {
 		Vect getAcceleration(void);
 		double getMa(void);
 		double getRadius(void);
-		double getDensity(void);
 		void draw(void);
 		void update(void);
-		void merge(Mass);
+		void merge(Mass);//This merges two points into one, preserving center of mass and momentum
 		void add_acceleration(Mass);
 		double distance(Mass);
 	private:
