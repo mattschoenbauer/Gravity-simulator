@@ -1,5 +1,6 @@
 //simulator.cpp
 //Gravity simulator
+//Kyle Duffy and Matt Schoenbauer
 #include <iostream>
 #include <string>
 #include <fstream>
