@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
 //		for(Mass m : masslist){ cout << m.getRadius() << endl;}
     }
 
-
+//Opening the windo
   gfx_open(wid,ht,"Gravity Simulator");
   int n = 0;
 
