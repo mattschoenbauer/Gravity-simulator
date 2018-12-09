@@ -42,8 +42,8 @@ Vect Mass::getVelocity() { return veloc; }
 Vect Mass::getAcceleration() { return accel; }
 
 void Mass::draw(void){
-	double average_radius = 7;
-	double average_mass = 40;
+	double average_radius = 40;
+	double average_mass = 100;
 	double average_volume = M_PI * pow(average_radius,2);
 	double average_density = average_mass/average_volume;
 	int max_color = 225;
