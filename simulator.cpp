@@ -1,6 +1,7 @@
 //simulator.cpp
 //Gravity simulator
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <unistd.h>
 #include "gfx3.h"
@@ -17,7 +18,6 @@ void interactive_initialize(list<Mass>&);
 void batch_initialize(list<Mass>&, istream&);
 void draw_points(list<Mass>);
 void update(list<Mass>&);
-double distance(Mass,Mass);
 
 int main(int argc, char *argv[]){
 
@@ -56,6 +56,7 @@ int main(int argc, char *argv[]){
             ifs.open(filename);
         }
 		batch_initialize(masslist,ifs);
+//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
     }
 
 
@@ -84,7 +85,7 @@ void interactive_initialize(list<Mass>& masslist){
 	char c;
 	int count = 1;
 	double cx, cy, vx, vy, ax, ay, mass, radius;
-	XPoint center;
+	Vect center;
 //	Vect accel(0,0);
 	while(!finished){
 		cout << "Object " << count << endl << endl;
@@ -130,16 +131,21 @@ void batch_initialize(list<Mass>& masslist, istream& ifs){
 	int wid=gfx_screenwidth();
 	int ht=gfx_screenheight();
 	double cx, cy, vx, vy, ax, ay, mass, radius;
-	XPoint center;
-	ifs.peek();
+	Vect center;
+//	char c = ifs.peek();
+//	int count = 1;
+	ifs >> cx;
 	while(!ifs.eof()){
 //		Vect accel(0,0);
-		ifs >> cx;
+//		cout << "cx is " << cx << endl;
+//		if(cx == (int)'.'){break;}
 		ifs >> cy;
 		center.x = cx + wid /2;
 		center.y = cy + ht /2;
 		ifs >> mass;
 		ifs >> radius;
+//		cout << "Object " << count << " radius: " << radius << endl;
+//		count++;
 		ifs >> vx;
 		ifs >> vy;
 		Vect veloc(vx,vy);
@@ -148,7 +154,10 @@ void batch_initialize(list<Mass>& masslist, istream& ifs){
 		Vect accel(ax,ay);
 		Mass m(center,mass,radius,veloc,accel);
 		masslist.push_back(m);
-		ifs.peek();
+		ifs >> cx;
+//		cout << ifs.eof() << endl;
+//		c = ifs.peek();
+//		cout << c << endl;
 	}
 }
 
@@ -159,18 +168,26 @@ void draw_points(list<Mass> masslist){
 void update(list<Mass>& masslist){
 	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
 		for(auto itr2 = next(itr,1); itr2 != masslist.end(); itr2++){
-			if(distance(*itr,*itr2) <= (*itr).getRadius() + (*itr2).getRadius()){
+			if((*itr).distance(*itr2) <= (*itr).getRadius() + (*itr2).getRadius()){
 				(*itr).merge(*itr2);
 				masslist.erase(itr2);
 			}
 		}
 	}
+//	int count = 1;
+	//Now computing accelerations
+	Vect zero(0,0);
 	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
-		(*itr).update();
+		(*itr).setAccel(zero);
+		for(auto itr2 = masslist.begin(); itr2 != masslist.end(); itr2++){
+			if(itr != itr2){
+				(*itr).add_acceleration(*itr2);
+			}
+		}
 	}
-}
-
-double distance(Mass m1,Mass m2){
-	XPoint c1 = m1.getCenter(), c2 = m2.getCenter();
-	return sqrt(pow(c1.x - c2.x,2) + pow(c1.y-c2.y,2));
+	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
+//		cout << "Updating Point " << count << endl;
+		(*itr).update();
+//		count++;
+	}
 }
