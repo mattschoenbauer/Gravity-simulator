@@ -225,34 +225,20 @@ void batch_initialize(list<Mass>& masslist) {
 void batch_initialize(list<Mass>& masslist, istream& ifs){
 	int wid=gfx_screenwidth();
 	int ht=gfx_screenheight();
-	double cx, cy, vx, vy, ax, ay, mass, radius;
-	Vect center;
-//	char c = ifs.peek();
-//	int count = 1;
+	double cx, cy, mass, radius;
+	Vect center, v, a(0,0);
 	ifs >> cx;
 	while(!ifs.eof()){
-//		Vect accel(0,0);
-//		cout << "cx is " << cx << endl;
-//		if(cx == (int)'.'){break;}
 		ifs >> cy;
 		center.x = cx + wid /2;
 		center.y = cy + ht /2;
 		ifs >> mass;
 		ifs >> radius;
-//		cout << "Object " << count << " radius: " << radius << endl;
-//		count++;
-		ifs >> vx;
-		ifs >> vy;
-		Vect veloc(vx,vy);
-		ifs >> ax;
-		ifs >> ay;
-		Vect accel(ax,ay);
-		Mass m(center,mass,radius,veloc,accel);
+		ifs >> v.x;
+		ifs >> v.y;
+		Mass m(center,mass,radius,v,a);
 		masslist.push_back(m);
 		ifs >> cx;
-//		cout << ifs.eof() << endl;
-//		c = ifs.peek();
-//		cout << c << endl;
 	}
 }
 
