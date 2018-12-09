@@ -1,4 +1,5 @@
 // point_mass.cpp
+//Matt Schoenbauer and Kyle Duffy
 
 #include "point_mass.h"
 #include <iostream>
