@@ -9,12 +9,12 @@
 using namespace std;
 
 Mass::Mass() {
-	XPoint c; c.x = 0; c.y = 0;
+	Vect c; c.x = 0; c.y = 0;
 	Vect v(0,0); Vect a(0,0);
 	setMass(c,0,1,v,a);
 }
 
-Mass::Mass(XPoint c, double m, double r, Vect v, Vect a) {
+Mass::Mass(Vect c, double m, double r, Vect v, Vect a) {
 	setMass(c,m,r,v,a);
 }
 
@@ -25,9 +25,9 @@ Mass::~Mass(){
 void Mass::setMa(double mass) { this->mass = mass; }
 void Mass::setRadius(double radius) { this->radius = radius; }
 void Mass::setVeloc(Vect veloc) { this->veloc = veloc; }
-void Mass::setCenter(XPoint center) { this->center = center; }
+void Mass::setCenter(Vect center) { this->center = center; }
 void Mass::setAccel(Vect accel) { this->accel = accel; }
-void Mass::setMass(XPoint center, double mass, double radius, Vect veloc, Vect accel) {
+void Mass::setMass(Vect center, double mass, double radius, Vect veloc, Vect accel) {
 	setCenter(center);
 	setMa(mass);
 	setRadius(radius);
@@ -35,7 +35,7 @@ void Mass::setMass(XPoint center, double mass, double radius, Vect veloc, Vect a
 	setAccel(accel);
 }
 
-XPoint Mass::getCenter() { return center; }
+Vect Mass::getCenter() { return center; }
 double Mass::getRadius() { return radius; }
 double Mass::getMa() { return mass; }
 Vect Mass::getVelocity() { return veloc; }
@@ -50,19 +50,20 @@ void Mass::draw(void){
 	double volume = M_PI * pow(getRadius(),2);
 	double density = getMa()/volume;
 	gfx_color(max_color * (density/average_density)/(1 + density/average_density),0,max_color * 1/(1 + density/average_density));
-	XPoint center = getCenter();
+	Vect center = getCenter();
+//	cout << getRadius() << endl;
 	gfx_fill_circle(center.x,center.y,getRadius());
 }
 
 void Mass::update(void){
-	XPoint c = getCenter();
+	Vect c = getCenter();
 	Vect v = getVelocity(), a = getAcceleration();
 //	cout << "Position is " << c.x << "," << c.y << endl;
 //	cout << "Velocity is " << v.x << "," << v.y << endl;
-	c.x = c.x + v.x/20.;
-	c.y = c.y + v.y/20.;
-	v.x = v.x + a.x/20.;
-	v.y = v.y + a.y/20.;
+	c.x = c.x + .05*v.x;
+	c.y = c.y + .05*v.y;
+	v.x = v.x + .05*a.x;
+	v.y = v.y + .05*a.y;
 	setCenter(c);
 	setVeloc(v);
 //	cout << "Position is " << c.x << "," << c.y << endl;
@@ -71,7 +72,7 @@ void Mass::update(void){
 
 void Mass::merge(Mass m){
 	double new_mass = getMa() + m.getMa();
-	XPoint c = getCenter(), cc = m.getCenter();
+	Vect c = getCenter(), cc = m.getCenter();
 	Vect v = getVelocity(), vv = m.getVelocity();
 	c.x = (c.x * getMa() + cc.x * m.getMa())/(new_mass);
 	c.y = (c.y * getMa() + cc.y * m.getMa())/(new_mass);
@@ -83,6 +84,12 @@ void Mass::merge(Mass m){
 	setMa(new_mass);
 }
 
-void Mass::compute_acceleration(Mass){
+void Mass::add_acceleration(Mass m){
+	float dist = distance(m);
+	setAccel((getCenter() + m.getCenter() * (-1))*(-GG*m.getMa()/pow(dist,2)) + getAcceleration());
+}
 
+double Mass::distance(Mass m){
+    Vect c1 = getCenter(), c2 = m.getCenter();
+    return sqrt(pow(c1.x - c2.x,2) + pow(c1.y-c2.y,2));
 }
