@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
 //		for(Mass m : masslist){ cout << m.getRadius() << endl;}
     }
 
-//Opening the windo
+//Opening the window
   gfx_open(wid,ht,"Gravity Simulator");
   int n = 0;
 
@@ -77,55 +77,88 @@ int main(int argc, char *argv[]){
   return 0;
 }
 
-void interactive_initialize(list<Mass>& masslist){
-	int wid=gfx_screenwidth();
-	int ht=gfx_screenheight();
-	cout << "Screen dimension are " << wid << " x " << ht << ".\n";
-	bool finished = false;
-	char c;
-	int count = 1;
-	double cx, cy, vx, vy, ax, ay, mass, radius;
-	Vect center;
-//	Vect accel(0,0);
-	while(!finished){
-		cout << "Object " << count << endl << endl;
-		cout << "Input X Position Coordinate: ";
-		cin >> cx;
-		cout << endl;
-		cout << "Input Y Position Coordinate: ";
-		cin >> cy;
-		cout << endl;
-		center.x = cx+ wid /2;
-		center.y = cy+ ht /2;
-		cout << "Input Mass: ";
-		cin >> mass;
-		cout << endl;
-		cout << "Input Radius: ";
-		cin >> radius;
-		cout << endl;
-		cout << "Input X Velocity Coordinate: ";
-		cin >> vx;
-		cout << endl;
-		cout << "Input Y Velocity Coordinate: ";
-		cin >> vy;
-		Vect veloc(vx,vy);
-		cout << endl;
-		cout << "Input X Acceleration Coordinate: ";
-		cin >> ax;
-		cout << endl;
-		cout << "Input Y Acceleration Coordinate: ";
-		cin >> ay;
-		Vect accel(ax,ay);
-		cout << endl;
-		Mass m(center,mass,radius,veloc,accel);
-		count++;
-		masslist.push_back(m);
-		cout << "Finished? ";
-		cin >> c;
-		cout << endl;
-		if(c == 'y'){finished = true;}
-	}
+void interactive_initialize(list<Mass>& masslist) {
+    int wid = gfx_screenwidth();
+    int ht = gfx_screenheight();
+    Terminal term(wid/2, ht/2); // configurable... account for desired size
+
+    string msg = "Screen dimension are " + to_string(wid) + " x " + to_string(ht) + ".\n";
+    term.print(msg.c_str());
+    bool finished = false;
+    char c;
+    int count = 1;
+    Vect center, v, a;
+    double cx,cy,mass,radius;
+    while (!finished) {
+        term.print("Object " + to_string(count++)); // unsure if ++ comes after method call in precedence, I think this should work...
+        cx = atof(term.prompt("Input X Position Coordinate: "));
+        cy = atof(term.prompt("Input Y Position Coordinate: "));
+        center.x = cx + wid/2;
+        center.y = cy + ht/2;
+        mass = atof(term.prompt("Input Mass: "));
+        radius = atof(term.prompt("Input Radius: "));
+        v.x = atof(term.prompt("Input X Velocity Coordinate: "));
+        v.y = atof(term.prompt("Input Y Velocity Coordinate: "));
+        a.x = atof(term.prompt("Input X Acceleration Coordinate: "));
+        a.y = atof(term.prompt("Input Y Acceleration Coordinate: "));
+
+        Mass m(center, mass, radius, v, a);
+        masslist.push_back(m);
+        c = term.prompt("Finished (y/n)? ")[0];
+        if (c == 'y') finished = true;
+    }
 }
+
+
+//void interactive_initialize(list<Mass>& masslist){
+//	int wid=gfx_screenwidth();
+//	int ht=gfx_screenheight();
+//	cout << "Screen dimension are " << wid << " x " << ht << ".\n";
+//	bool finished = false;
+//	char c;
+//	int count = 1;
+//	double cx, cy, vx, vy, ax, ay, mass, radius;
+//	Vect center;
+////	Vect accel(0,0);
+//	while(!finished){
+//		cout << "Object " << count << endl << endl;
+//		cout << "Input X Position Coordinate: ";
+//		cin >> cx;
+//		cout << endl;
+//		cout << "Input Y Position Coordinate: ";
+//		cin >> cy;
+//		cout << endl;
+//		center.x = cx+ wid /2;
+//		center.y = cy+ ht /2;
+//		cout << "Input Mass: ";
+//		cin >> mass;
+//		cout << endl;
+//		cout << "Input Radius: ";
+//		cin >> radius;
+//		cout << endl;
+//		cout << "Input X Velocity Coordinate: ";
+//		cin >> vx;
+//		cout << endl;
+//		cout << "Input Y Velocity Coordinate: ";
+//		cin >> vy;
+//		Vect veloc(vx,vy);
+//		cout << endl;
+//		cout << "Input X Acceleration Coordinate: ";
+//		cin >> ax;
+//		cout << endl;
+//		cout << "Input Y Acceleration Coordinate: ";
+//		cin >> ay;
+//		Vect accel(ax,ay);
+//		cout << endl;
+//		Mass m(center,mass,radius,veloc,accel);
+//		count++;
+//		masslist.push_back(m);
+//		cout << "Finished? ";
+//		cin >> c;
+//		cout << endl;
+//		if(c == 'y'){finished = true;}
+//	}
+//}
 
 void batch_initialize(list<Mass>& masslist, istream& ifs){
 	int wid=gfx_screenwidth();
