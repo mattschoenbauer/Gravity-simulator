@@ -35,10 +35,7 @@ void two_ring_initialize(list<Mass>&);
 
 int main(){
 	srand(time(NULL));
-	string option;
 	gfx_open(wid,ht,"Gravity Simulator");
-//	gfx_color(255,255,255);
-//	gfx_line(wid/2,0,wid/2,ht/2);
 	list<Mass> masslist;
 	init(masslist);
 
@@ -49,8 +46,11 @@ int main(){
 		if(gfx_event_waiting()){
 			n = gfx_wait();
 			if (n == (int)'q') break;
-			if (n == (int)'r') { // WIP
-				main();
+			if (n == (int)'r') {
+				masslist.clear();
+				gfx_clear();
+				system("./grav");
+				return 0;
 			}
 		}
 		usleep(40000);
@@ -64,23 +64,6 @@ void init(list<Mass>& masslist) {
 	static Terminal term(wid/2, ht/2);
 //	gfx_color(255,255,255);
 	string entry = term.prompt("(i)nput initial condions, or use (p)re-made initial conditions? ", 'b');
-	string s0= "Pre-made input options:";
-	string s3= "1: Large random objects";
-	string s4= "2: Small random objects";
-	string s5= "3: Grid of objects";
-	string s6= "4: Ring of objects";
-	string s7= "5: Interlaced rings";
-	string s1= "6: Single-planet orbit";
-	string s2= "7: Multi-planet orbit";
-	gfx_color(255,255,255);
-	term.print(s0);
-	term.print("    " + s3);
-	term.print("    " + s4);
-	term.print("    " + s5);
-	term.print("    " + s6);
-	term.print("    " + s7);
-	term.print("    " + s1);
-	term.print("    " + s2);
 	if (entry.length() > 1) init(masslist);
 	else {
 		char e = entry[0];
@@ -125,40 +108,59 @@ void interactive_initialize(list<Mass>& masslist) {
 
 void batch_initialize(list<Mass>& masslist) {
     Terminal term(wid/2, ht/2);
-	string filename = term.prompt("Enter premade initial conditions or filename: ", 'b');//second command will be filename
-	if (filename == "6") {
-		filename = "orbit1";
-	}
-	if (filename == "7") {
-		filename = "orbit2";
-	}
-	if (filename == "2") {
-		random_small_initialize(masslist);
-		return;
-	}
-	if (filename == "1") {
-		random_large_initialize(masslist);
-		return;
-	}
-	if (filename == "3") {
-		grid_initialize(masslist);
-		return;
-	}
-	if (filename == "4") {
-		ring_initialize(masslist);
-		return;
-	}
-    if (filename == "5") {
-        two_ring_initialize(masslist);
-        return;
-    }
+	bool not_cool = false;
 	ifstream ifs;
-	ifs.open(filename);
-	while(!ifs){
-		term.print("Please input a valid file name");//Checking for a valid filename
-		filename = term.prompt("Try again: ", 'b');
+	string s0= "Pre-made input options:";
+	string s3= "1: Large random objects";
+	string s4= "2: Small random objects";
+	string s5= "3: Grid of objects";
+	string s6= "4: Ring of objects";
+	string s7= "5: Interlaced rings";
+	string s1= "6: Single-planet orbit";
+	string s2= "7: Multi-planet orbit";
+	gfx_color(255,255,255);
+	do {
+		term.print(s0);
+		term.print("    " + s3);
+		term.print("    " + s4);
+		term.print("    " + s5);
+		term.print("    " + s6);
+		term.print("    " + s7);
+		term.print("    " + s1);
+		term.print("    " + s2);
+		string filename = term.prompt("Enter premade initial conditions or filename: ", 'b');//second command will be filename
+		if (filename == "6") {
+			filename = "orbit1";
+		}
+		if (filename == "7") {
+			filename = "orbit2";
+		}
+		if (filename == "2") {
+			random_small_initialize(masslist);
+			return;
+		}
+		if (filename == "1") {
+			random_large_initialize(masslist);
+			return;
+		}
+		if (filename == "3") {
+			grid_initialize(masslist);
+			return;
+		}
+		if (filename == "4") {
+			ring_initialize(masslist);
+			return;
+		}
+		if (filename == "5") {
+			two_ring_initialize(masslist);
+			return;
+		}
 		ifs.open(filename);
-	}
+		if (!ifs){
+			term.print("File not found, try again.");//Checking for a valid filename
+			not_cool = true;
+		}
+	} while (not_cool);
 	batch_initialize(masslist,ifs);
 	//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
 }
