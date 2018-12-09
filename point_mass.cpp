@@ -60,10 +60,10 @@ void Mass::update(void){
 	Vect v = getVelocity(), a = getAcceleration();
 //	cout << "Position is " << c.x << "," << c.y << endl;
 //	cout << "Velocity is " << v.x << "," << v.y << endl;
-	c.x = c.x + .05*v.x;
-	c.y = c.y + .05*v.y;
-	v.x = v.x + .05*a.x;
-	v.y = v.y + .05*a.y;
+	c.x = c.x + v.x;
+	c.y = c.y + v.y;
+	v.x = v.x + a.x;
+	v.y = v.y + a.y;
 	setCenter(c);
 	setVeloc(v);
 //	cout << "Position is " << c.x << "," << c.y << endl;
@@ -86,7 +86,7 @@ void Mass::merge(Mass m){
 
 void Mass::add_acceleration(Mass m){
 	float dist = distance(m);
-	setAccel((getCenter() + m.getCenter() * (-1))*(-GG*m.getMa()/pow(dist,2)) + getAcceleration());
+	setAccel((getCenter() + m.getCenter() * (-1))*(-GG*m.getMa()/pow(dist,3)) + getAcceleration());
 }
 
 double Mass::distance(Mass m){
