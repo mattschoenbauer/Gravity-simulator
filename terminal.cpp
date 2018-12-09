@@ -28,21 +28,25 @@ string Terminal::prompt(const char* msg) {
 	int pt = get_font_size(msg);
 	gfx_color(255,255,255);
 	gfx_text(0,row,msg);
+	int event;
 	do {
-		int e = (int)gfx_wait();
-		if (e == -1) continue;
-		// if (isalpha(e) || isdigit(e)) {
-		/* cout << (char)e << endl; */
-		/* } else cout << e << endl; */
-		if (e == 13) break;
-		if(isalpha(e) || isdigit(e)) entry += (char)e;
-		else if (e == 8) entry.pop_back();
+		event = gfx_event_waiting();
+		if (event != 0) {
+			int e = (int)gfx_wait();
+			if (event == 2) {
+				if (e == 13) break;
+				if(isalpha(e) || isdigit(e)) entry += (char)e;
+				else if (e == 8) entry.pop_back();
 
-		gfx_color(tbgR,tbgG,tbgB);
-		gfx_fill_rectangle(0,row-pt, w, pt+tween);
-		gfx_color(255,255,255);
-		gfx_text(0,row,msg);
-		gfx_text(col, row, entry.c_str());
+				gfx_color(tbgR,tbgG,tbgB);
+				gfx_fill_rectangle(0,row-pt, w, pt+tween);
+				gfx_color(255,255,255);
+				gfx_text(0,row,msg);
+				gfx_text(col, row, entry.c_str());
+			} else {
+				continue;
+			}
+		}
 	} while (true);
 	return entry;
 }
