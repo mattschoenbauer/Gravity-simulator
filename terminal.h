@@ -24,6 +24,7 @@ class Terminal {
 		int w, h;
 		const int tbgR = 0, tbgG = 0, tbgB = 0;
 		int prep_term(char* text);
+		const int tween = 3;
 };
 
 #endif

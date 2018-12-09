@@ -25,13 +25,20 @@ string Terminal::prompt(char* msg) {
 	int row = prep_term(msg);
 	int col = get_width(msg);
 	int pt = get_font_size(msg);
+	gfx_color(255,255,255);
+	gfx_text(0,row,msg);
 	do {
-		int e = (int)gfx_wait();
-		cout << (char)e << endl;
+		int e = (gfx_event_waiting() == 2) ? (int)gfx_wait() : -1;
+		if (e == -1) continue;
+		// if (isalpha(e) || isdigit(e)) {
+		/* cout << (char)e << endl; */
+		/* } else cout << e << endl; */
 		if (e == 13) break;
 		if(isalpha(e) || isdigit(e)) entry += (char)e;
+		else if (e == 8) entry.pop_back();
+
 		gfx_color(tbgR,tbgG,tbgB);
-		gfx_fill_rectangle(row-pt,0, w, pt);
+		gfx_fill_rectangle(0,row-pt, w, pt+tween);
 		gfx_color(255,255,255);
 		gfx_text(0,row,msg);
 		gfx_text(col, row, entry.c_str());
@@ -40,14 +47,15 @@ string Terminal::prompt(char* msg) {
 }
 
 int Terminal::prep_term(char* text) {
-	static int printY = get_font_size(text);
+	int pt = get_font_size(text);
+	static int printY = pt;
 	gfx_color(255,255,255);
 	if (printY > h) {
 		terminal_clear();
-		printY = 0;
+		printY = pt;
 	}
-	printY += get_font_size(text);
-	return printY - get_font_size(text);
+	printY += get_font_size(text) + tween;
+	return printY - get_font_size(text) - tween;
 }
 
 void Terminal::terminal_clear() {
