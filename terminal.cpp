@@ -1,4 +1,5 @@
 // terminal.cpp
+// Kyle Duffy and Matt Schoenbauer
 
 #include "terminal.h"
 #include <iostream>

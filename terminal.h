@@ -1,4 +1,5 @@
 // terminal.h
+// Kyle Duffy and Matt Schoenbauer
 
 #ifndef TERMINAL_H
 #define TERMINAL_H
