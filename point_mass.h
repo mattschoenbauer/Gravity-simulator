@@ -11,6 +11,7 @@ struct Vect {
 	Vect() { x = 0.; y = 0.; }
 	Vect(double x, double y) { this->x = x; this->y = y; }
 	Vect operator+(Vect v) { Vect u(x+v.x, y+v.y); return u; }
+	Vect operator*(double t) { Vect u(t*x, t*y); return u; }
 };
 
 
@@ -18,14 +19,14 @@ class Mass {
 	public:
 		Mass();
 		~Mass();
-		Mass(XPoint center, double mass, double radius, Vect veloc, Vect accel);
-		void setMass(XPoint center, double mass, double radius, Vect veloc, Vect accel);
+		Mass(Vect center, double mass, double radius, Vect veloc, Vect accel);
+		void setMass(Vect center, double mass, double radius, Vect veloc, Vect accel);
 		void setMa(double mass);
 		void setVeloc(Vect);
 		void setRadius(double);
-		void setCenter(XPoint);
+		void setCenter(Vect);
 		void setAccel(Vect);
-		XPoint getCenter(void);
+		Vect getCenter(void);
 		Vect getVelocity(void);
 		Vect getAcceleration(void);
 		double getMa(void);
@@ -34,9 +35,10 @@ class Mass {
 		void draw(void);
 		void update(void);
 		void merge(Mass);
-		void compute_acceleration(Mass);
+		void add_acceleration(Mass);
+		double distance(Mass);
 	private:
-		XPoint center;
+		Vect center;
 		double radius;
 		double mass;
 		Vect veloc;
