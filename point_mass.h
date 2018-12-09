@@ -1,5 +1,6 @@
 //point_mass.h
 //Class implementation of circular objects
+//Matt Schoenbauer and Kyle Duffy
 
 #ifndef POINT_MASS_H
 #define POINT_MASS_H
