@@ -25,6 +25,7 @@ int main(int argc, char *argv[]){
     string option;
 	int wid=gfx_screenwidth();
 	int ht=gfx_screenheight();
+  	gfx_open(wid,ht,"Gravity Simulator");
 
     switch(argc){
         case 1: option = "interactive";
@@ -56,12 +57,12 @@ int main(int argc, char *argv[]){
             cout << endl;
             ifs.open(filename);
         }
+  		gfx_open(wid,ht,"Gravity Simulator");
 		batch_initialize(masslist,ifs);
 //		for(Mass m : masslist){ cout << m.getRadius() << endl;}
     }
 
 //Opening the window
-  gfx_open(wid,ht,"Gravity Simulator");
   int n = 0;
 
   while(true) {
