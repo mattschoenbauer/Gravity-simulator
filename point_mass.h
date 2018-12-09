@@ -10,7 +10,7 @@ struct Vect {
 	double x,y;
 	Vect() { x = 0.; y = 0.; }
 	Vect(double x, double y) { this->x = x; this->y = y; }
-	Vect operator+(Vect v) { Vect u(x+v.x, y+v.y); return u; } 
+	Vect operator+(Vect v) { Vect u(x+v.x, y+v.y); return u; }
 };
 
 
@@ -28,7 +28,7 @@ class Mass {
 		XPoint getCenter(void);
 		Vect getVelocity(void);
 		Vect getAcceleration(void);
-		double getMass(void);
+		double getMa(void);
 		double getRadius(void);
 		double getDensity(void);
 		void draw(void);
