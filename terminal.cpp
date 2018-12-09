@@ -19,6 +19,7 @@ void Terminal::print(char* text) {
 	int row = prep_term(text);
 	gfx_text(0, row, text);
 }
+void Terminal::print(string text) { print(text.c_str()); }
 
 string Terminal::prompt(char* msg) {
 	string entry;
@@ -45,6 +46,7 @@ string Terminal::prompt(char* msg) {
 	} while (true);
 	return entry;
 }
+string Terminal::prompt(string msg) { return prompt(msg.c_str()); }
 
 int Terminal::prep_term(char* text) {
 	int pt = get_font_size(text);

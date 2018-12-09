@@ -13,7 +13,9 @@ class Terminal {
 		~Terminal();
 		Terminal(int w, int h);
 		void print(char* text);
+		void print(string text);
 		string prompt(char* msg);
+		string prompt(string msg);
 		void set_font_size(short);
 		void terminal_clear();
 		int get_font_size(char* text);
