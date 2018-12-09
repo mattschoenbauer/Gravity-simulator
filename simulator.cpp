@@ -31,11 +31,14 @@ void random_large_initialize(list<Mass>&);
 void grid_initialize(list<Mass>&);
 void ring_initialize(list<Mass>&);
 Mass random(int,int,int,int);
+void two_ring_initialize(list<Mass>&);
 
 int main(){
 	srand(time(NULL));
 	string option;
 	gfx_open(wid,ht,"Gravity Simulator");
+//	gfx_color(255,255,255);
+//	gfx_line(wid/2,0,wid/2,ht/2);
 	list<Mass> masslist;
 	init(masslist);
 
@@ -59,12 +62,30 @@ int main(){
 
 void init(list<Mass>& masslist) {
 	static Terminal term(wid/2, ht/2);
-	string entry = term.prompt("(i)nput initial condions, or (l)oad file? ", 'b');
+//	gfx_color(255,255,255);
+	string entry = term.prompt("(i)nput initial condions, or use (p)re-made initial conditions? ", 'b');
+	string s0= "Pre-made input options:";
+	string s1= "1: Single-planet orbit";
+	string s2= "2: Multi-planet orbit";
+	string s3= "3: Large random objects";
+	string s4= "4: Small random objects";
+	string s5= "5: Grid of objects";
+	string s6= "6: Ring of objects";
+	string s7= "7: Interlaced rings";
+	gfx_color(255,255,255);
+	term.print(s0);
+	term.print("    " + s1);
+	term.print("    " + s2);
+	term.print("    " + s3);
+	term.print("    " + s4);
+	term.print("    " + s5);
+	term.print("    " + s6);
+	term.print("    " + s7);
 	if (entry.length() > 1) init(masslist);
 	else {
 		char e = entry[0];
 		if (e == 'i') interactive_initialize(masslist);
-		else if (e == 'l') batch_initialize(masslist);
+		else if (e == 'p') batch_initialize(masslist);
 		else init(masslist);
 	}
 }
@@ -104,23 +125,35 @@ void interactive_initialize(list<Mass>& masslist) {
 
 void batch_initialize(list<Mass>& masslist) {
     Terminal term(wid/2, ht/2);
-	string filename = term.prompt("Enter a filename (or rand for random): ", 'b');//second command will be filename
-	if (filename == "randsmall") {
+	string filename = term.prompt("Enter premade initial conditions or filename: ", 'b');//second command will be filename
+	if (filename == "1") {
 		random_small_initialize(masslist);
 		return;
 	}
-	if (filename == "randlarge") {
+	if (filename == "2") {
+		random_small_initialize(masslist);
+		return;
+	}
+	if (filename == "3") {
+		random_small_initialize(masslist);
+		return;
+	}
+	if (filename == "4") {
 		random_large_initialize(masslist);
 		return;
 	}
-	if (filename == "grid") {
+	if (filename == "5") {
 		grid_initialize(masslist);
 		return;
 	}
-	if (filename == "ring") {
+	if (filename == "6") {
 		ring_initialize(masslist);
 		return;
 	}
+    if (filename == "7") {
+        two_ring_initialize(masslist);
+        return;
+    }
 	ifstream ifs;
 	ifs.open(filename);
 	while(!ifs){
@@ -153,16 +186,16 @@ void batch_initialize(list<Mass>& masslist, istream& ifs){
 }
 
 void random_large_initialize(list<Mass>& masslist) {
-	const int num = 20;
+	const int num = 15;
 	for (int i = 0; i < num; i++) {
-		masslist.push_back(random(10,30,75,125));
+		masslist.push_back(random(10,30,1,8));
 	}
 }
 
 void random_small_initialize(list<Mass>& masslist) {
 	const int num = 40;
 	for (int i = 0; i < num; i++) {
-		masslist.push_back(random(1,5,30,50));
+		masslist.push_back(random(3,10,1,10));
 	}
 }
 
@@ -176,10 +209,45 @@ Mass random(int r_min, int r_max, int m_min, int m_max) {
 }
 
 void grid_initialize(list<Mass>& masslist) {
+    Vect zero(0,0), center;
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j< 7; j++){
+            center.x = mrgn + i * wid/10;
+            center.y = mrgn + j*ht/7;
+            Mass m(center,1,3.8,zero,zero);
+            masslist.push_back(m);
+        }
+    }
 }
 
 void ring_initialize(list<Mass>& masslist) {
+    Vect zero(0,0), center;
+    double radius = 3 * ht/8.;
+    for(int i = 0; i < 50; i++){
+        center.x = wid/2 + radius * cos(2 * M_PI * i/50.);
+        center.y = ht/2 + radius * sin(2 * M_PI * i/50.);
+        Mass m(center,.3,3.5,zero,zero);
+        masslist.push_back(m);
+    }
 }
+
+void two_ring_initialize(list<Mass>& masslist) {
+    Vect zero(0,0), center;
+    double radius = 1 * ht/3.;
+    for(int i = 0; i < 50; i++){
+        center.x = 2*wid/3 + radius * cos(2 * M_PI * i/50.);
+        center.y = ht/2 + radius * sin(2 * M_PI * i/50.);
+        Mass m(center,.5,4,zero,zero);
+        masslist.push_back(m);
+    }
+    for(int i = 0; i < 50; i++){
+        center.x = wid/3 + radius * cos(2 * M_PI * i/50.);
+        center.y = ht/2 + radius * sin(2 * M_PI * i/50.);
+        Mass m(center,.5,4,zero,zero);
+        masslist.push_back(m);
+    }
+}
+
 
 void draw_points(list<Mass> masslist){
 	for(Mass m : masslist){m.draw();}
