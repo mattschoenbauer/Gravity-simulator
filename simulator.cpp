@@ -15,68 +15,114 @@ using namespace std;
 
 #define PI 3.14159265
 
+const int wid=gfx_screenwidth();
+const int ht=gfx_screenheight();
+// Terminal term(wid/2, ht/2);
+
 void interactive_initialize(list<Mass>&);
 void batch_initialize(list<Mass>&, istream&);
 void draw_points(list<Mass>);
 void update(list<Mass>&);
+void init(list<Mass>&);
+void batch_initialize(list<Mass>&);
 
+/*
 int main(int argc, char *argv[]){
 
-    string option;
+	string option;
 	int wid=gfx_screenwidth();
 	int ht=gfx_screenheight();
-  	gfx_open(wid,ht,"Gravity Simulator");
+	gfx_open(wid,ht,"Gravity Simulator");
 
-    switch(argc){
-        case 1: option = "interactive";
-            break;
+	switch(argc){
+		case 1: option = "interactive";
+				break;
 
-        case 2: option = "batch";
-            break;
+		case 2: option = "batch";
+				break;
 
-        default: cout << "Too many arguments\n";
-             return 0;
-    }
-
-
-    list<Mass> masslist;
-
-    if(option == "interactive"){
-        cout << "Entering interactive mode\n";
-		interactive_initialize(masslist);
-    }
-
-    if(option == "batch"){
-        string filename = argv[1];//second command will be filename
-        ifstream ifs;
-        ifs.open(filename);
-        while(!ifs){
-            cout << "Please input a valid file name\n";//Checking for a valid filename
-            cout << "Try again: ";
-            cin >> filename;
-            cout << endl;
-            ifs.open(filename);
-        }
-  		gfx_open(wid,ht,"Gravity Simulator");
-		batch_initialize(masslist,ifs);
-//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
-    }
-
-//Opening the window
-  int n = 0;
-
-  while(true) {
-	draw_points(masslist);
-	update(masslist);
-  	if(gfx_event_waiting()){
-   		n = gfx_wait();
-        if (n == (int)'q') break;
+		default: cout << "Too many arguments\n";
+				 return 0;
 	}
-    usleep(40000);
-    gfx_clear();
-  }
 
-  return 0;
+
+	list<Mass> masslist;
+
+	if(option == "interactive"){
+		cout << "Entering interactive mode\n";
+		interactive_initialize(masslist);
+	}
+
+	if(option == "batch"){
+		string filename = argv[1];//second command will be filename
+		ifstream ifs;
+		ifs.open(filename);
+		while(!ifs){
+			cout << "Please input a valid file name\n";//Checking for a valid filename
+			cout << "Try again: ";
+			cin >> filename;
+			cout << endl;
+			ifs.open(filename);
+		}
+		gfx_open(wid,ht,"Gravity Simulator");
+		batch_initialize(masslist,ifs);
+		//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
+	}
+
+	//Opening the window
+	int n = 0;
+
+	while(true) {
+		draw_points(masslist);
+		update(masslist);
+		if(gfx_event_waiting()){
+			n = gfx_wait();
+			if (n == (int)'q') break;
+		}
+		usleep(40000);
+		gfx_clear();
+	}
+
+	return 0;
+}
+*/
+
+int main(int argc, char *argv[]){
+	string option;
+	gfx_open(wid,ht,"Gravity Simulator");
+	list<Mass> masslist;
+	init(masslist);
+
+	int n = 0;
+	while(true) {
+		draw_points(masslist);
+		update(masslist);
+		if(gfx_event_waiting()){
+			n = gfx_wait();
+			if (n == (int)'q') break;
+		}
+		usleep(40000);
+		gfx_clear();
+	}
+
+	return 0;
+}
+
+void init(list<Mass>& masslist) {
+	Terminal term(wid/2, ht/2);
+	string entry = term.prompt("(i)nput initial condions, or (l)oad file? ", 'b');
+	if (entry.length() > 1) init(masslist);
+	else {
+		switch (entry[0]) {
+			case 'i':
+				interactive_initialize(masslist);
+				break;
+			case 'l':
+				batch_initialize(masslist);
+				break;
+			defalut: init(masslist);
+		}
+	}
 }
 
 void interactive_initialize(list<Mass>& masslist) {
@@ -84,12 +130,12 @@ void interactive_initialize(list<Mass>& masslist) {
     int ht = gfx_screenheight();
     Terminal term(wid/2, ht/2); // configurable... account for desired size
 
-    string msg = "Screen dimension are " + to_string(wid) + " x " + to_string(ht) + ".\n";
+    string msg = "Screen dimension are " + to_string(wid) + " x " + to_string(ht) + ".";
     term.print(msg.c_str());
     bool finished = false;
     char c;
     int count = 1;
-    Vect center, v, a;
+    Vect center, v, a(0,0);
     double cx,cy,mass,radius;
     while (!finished) {
         term.print("Object " + to_string(count++)); // unsure if ++ comes after method call in precedence, I think this should work...
@@ -101,14 +147,28 @@ void interactive_initialize(list<Mass>& masslist) {
         radius = atof(term.prompt("Input Radius: ", 'd').c_str());
         v.x = atof(term.prompt("Input X Velocity Coordinate: ", 'd').c_str());
         v.y = atof(term.prompt("Input Y Velocity Coordinate: ", 'd').c_str());
-        a.x = atof(term.prompt("Input X Acceleration Coordinate: ", 'd').c_str());
-        a.y = atof(term.prompt("Input Y Acceleration Coordinate: ", 'd').c_str());
+        /* a.x = atof(term.prompt("Input X Acceleration Coordinate: ", 'd').c_str()); */
+        /* a.y = atof(term.prompt("Input Y Acceleration Coordinate: ", 'd').c_str()); */
 
         Mass m(center, mass, radius, v, a);
         masslist.push_back(m);
-        c = term.prompt("Finished (y/n)? ", 'a')[0];
+        c = term.prompt("Finished (y/n)? ", 'b')[0];
         if (c == 'y') finished = true;
     }
+}
+
+void batch_initialize(list<Mass>& masslist) {
+    Terminal term(wid/2, ht/2);
+	string filename = term.prompt("Enter a filename: ", 'b');//second command will be filename
+	ifstream ifs;
+	ifs.open(filename);
+	while(!ifs){
+		term.print("Please input a valid file name");//Checking for a valid filename
+		filename = term.prompt("Try again: ", 'b');
+		ifs.open(filename);
+	}
+	batch_initialize(masslist,ifs);
+	//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
 }
 
 
