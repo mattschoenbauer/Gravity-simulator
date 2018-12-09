@@ -12,16 +12,16 @@ Terminal::Terminal(int w, int h) {
 }
 
 void Terminal::set_font_size(short s) { font_size = s; }
-int Terminal::get_font_size(char* text) { return gfx_textpixelheight(text, font); }
-int Terminal::get_width(char* text) { return gfx_textpixelwidth(text, font); }
+int Terminal::get_font_size(const char* text) { return gfx_textpixelheight((char*)text, font); }
+int Terminal::get_width(const char* text) { return gfx_textpixelwidth((char*)text, font); }
 
-void Terminal::print(char* text) {
+void Terminal::print(const char* text) {
 	int row = prep_term(text);
-	gfx_text(0, row, text);
+	gfx_text(5, row, text);
 }
 void Terminal::print(string text) { print(text.c_str()); }
 
-string Terminal::prompt(char* msg) {
+string Terminal::prompt(const char* msg) {
 	string entry;
 	int row = prep_term(msg);
 	int col = get_width(msg);
@@ -29,7 +29,7 @@ string Terminal::prompt(char* msg) {
 	gfx_color(255,255,255);
 	gfx_text(0,row,msg);
 	do {
-		int e = (gfx_event_waiting() == 2) ? (int)gfx_wait() : -1;
+		int e = (int)gfx_wait();
 		if (e == -1) continue;
 		// if (isalpha(e) || isdigit(e)) {
 		/* cout << (char)e << endl; */
@@ -48,7 +48,8 @@ string Terminal::prompt(char* msg) {
 }
 string Terminal::prompt(string msg) { return prompt(msg.c_str()); }
 
-int Terminal::prep_term(char* text) {
+int Terminal::prep_term(const char* text) {
+	/* return 14; */
 	int pt = get_font_size(text);
 	static int printY = pt;
 	gfx_color(255,255,255);
