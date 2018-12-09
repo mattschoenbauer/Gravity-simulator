@@ -90,13 +90,13 @@ void interactive_initialize(list<Mass>& masslist) {
     Vect center, v, a(0,0);
     double cx,cy,mass,radius;
     while (!finished) {
-        term.print("Object " + to_string(count++)); 
+        term.print("Object " + to_string(count++));
         cx = atof(term.prompt("Input X Position Coordinate: ", 'd').c_str());
         cy = atof(term.prompt("Input Y Position Coordinate: ", 'd').c_str());
         center.x = cx + wid/2;
         center.y = cy + ht/2;
-        mass = atof(term.prompt("Input Mass: ", 'd').c_str());
-        radius = atof(term.prompt("Input Radius: ", 'd').c_str());
+        mass = atof(term.prompt("Input Mass: ", 'p').c_str());
+        radius = atof(term.prompt("Input Radius: ", 'p').c_str());
         v.x = atof(term.prompt("Input X Velocity Coordinate: ", 'd').c_str());
         v.y = atof(term.prompt("Input Y Velocity Coordinate: ", 'd').c_str());
 
@@ -111,7 +111,7 @@ void interactive_initialize(list<Mass>& masslist) {
 void batch_initialize(list<Mass>& masslist) {
 	// initializes environment in batch mode
 	// in this mode the window is congigured using pre-existing conditions
-	
+
     Terminal term(wid/2, ht/3);
 	bool not_cool = false;
 	ifstream ifs;
@@ -182,7 +182,7 @@ void batch_initialize(list<Mass>& masslist) {
 
 void batch_initialize(list<Mass>& masslist, istream& ifs){
 	// processes data and objects to the master list
-	
+
 	int wid=gfx_screenwidth();
 	int ht=gfx_screenheight();
 	double cx, cy, mass, radius;
@@ -274,7 +274,7 @@ void draw_points(list<Mass> masslist){
 
 void update(list<Mass>& masslist){
 	// updates relative effect of gravity on each mass
-	
+
 	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
 		for(auto itr2 = next(itr,1); itr2 != masslist.end(); itr2++){
 			if((*itr).distance(*itr2) <= (*itr).getRadius() + (*itr2).getRadius()){
