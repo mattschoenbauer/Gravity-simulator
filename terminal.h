@@ -22,10 +22,10 @@ class Terminal {
 		int get_width(const char* text);
 	private:
 		char* font = "-misc-fixed-medium-r-semicondensed--12-110-75-75-c-60-iso8859-1";
-		short font_size;
+		short font_size; 
 		int w, h;
-		const int tbgR = 0, tbgG = 0, tbgB = 0;
-		const int tween = 3;
+		const int tbgR = 0, tbgG = 0, tbgB = 0; // background color
+		const int tween = 3; // space between lines
 		int prep_term(const char* text);
 		bool check_type(int, char);
 };
