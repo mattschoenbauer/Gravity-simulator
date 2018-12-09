@@ -111,36 +111,32 @@ void batch_initialize(list<Mass>& masslist) {
 	bool not_cool = false;
 	ifstream ifs;
 	string s0= "Pre-made input options:";
-	string s3= "1: Large random objects";
-	string s4= "2: Small random objects";
-	string s5= "3: Grid of objects";
-	string s6= "4: Ring of objects";
-	string s7= "5: Interlaced rings";
-	string s1= "6: Single-planet orbit";
-	string s2= "7: Multi-planet orbit";
+	string s1= "1: Large random objects";
+	string s2= "2: Small random objects";
+	string s3= "3: Grid of objects";
+	string s4= "4: Ring of objects";
+	string s5= "5: Interlaced rings";
+	string s6= "6: Single-planet orbit";
+	string s7= "7: Multi-planet orbit";
+	string s8= "8: Neutron stars";
 	gfx_color(255,255,255);
 	do {
 		term.print(s0);
+		term.print("    " + s1);
+		term.print("    " + s2);
 		term.print("    " + s3);
 		term.print("    " + s4);
 		term.print("    " + s5);
 		term.print("    " + s6);
 		term.print("    " + s7);
-		term.print("    " + s1);
-		term.print("    " + s2);
+		term.print("    " + s8);
 		string filename = term.prompt("Enter premade initial conditions or filename: ", 'b');//second command will be filename
-		if (filename == "6") {
-			filename = "orbit1";
-		}
-		if (filename == "7") {
-			filename = "orbit2";
+		if (filename == "1") {
+			random_large_initialize(masslist);
+			return;
 		}
 		if (filename == "2") {
 			random_small_initialize(masslist);
-			return;
-		}
-		if (filename == "1") {
-			random_large_initialize(masslist);
 			return;
 		}
 		if (filename == "3") {
@@ -154,6 +150,15 @@ void batch_initialize(list<Mass>& masslist) {
 		if (filename == "5") {
 			two_ring_initialize(masslist);
 			return;
+		}
+		if (filename == "6") {
+			filename = "orbit1";
+		}
+		if (filename == "7") {
+			filename = "orbit2";
+		}
+		if (filename == "8") {
+			filename = "neutron";
 		}
 		ifs.open(filename);
 		if (!ifs){
