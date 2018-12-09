@@ -9,6 +9,7 @@ Terminal::Terminal(int w, int h) {
 	this->w = w;
 	this->h = h;
 	font_size = 12;
+	// gfx_changefont(font);
 }
 
 void Terminal::set_font_size(short s) { font_size = s; }
@@ -73,9 +74,9 @@ void Terminal::terminal_clear() {
 bool Terminal::check_type(int e, char code) {
 	switch (code) {
 		case 'b':
-			return (isalpha(e) || isdigit(e));
+			return (isalpha(e) || isdigit(e) || e == '.');
 		case 'd':
-			return (isdigit(e));
+			return (isdigit(e) || e == '-');
 		default: return true;
 	}
 }
