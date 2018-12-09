@@ -25,7 +25,10 @@ void draw_points(list<Mass>);
 void update(list<Mass>&);
 void init(list<Mass>&);
 void batch_initialize(list<Mass>&);
-void random_initialize(list<Mass>&);
+void random_small_initialize(list<Mass>&);
+void random_large_initialize(list<Mass>&);
+void grid_initialize(list<Mass>&);
+void ring_initialize(list<Mass>&);
 
 /*
 int main(int argc, char *argv[]){
@@ -157,8 +160,20 @@ void interactive_initialize(list<Mass>& masslist) {
 void batch_initialize(list<Mass>& masslist) {
     Terminal term(wid/2, ht/2);
 	string filename = term.prompt("Enter a filename (or rand for random): ", 'b');//second command will be filename
-	if (filename == "rand") {
-		random_initialize(masslist);
+	if (filename == "rand_small") {
+		random_small_initialize(masslist);
+		return;
+	}
+	if (filename == "rand_large") {
+		random_large_initialize(masslist);
+		return;
+	}
+	if (filename == "grid") {
+		grid_initialize(masslist);
+		return;
+	}
+	if (filename == "ring") {
+		ring_initialize(masslist);
 		return;
 	}
 	ifstream ifs;
@@ -243,7 +258,16 @@ void batch_initialize(list<Mass>& masslist, istream& ifs){
 	}
 }
 
-void random_initialize(list<Mass>& masslist) {
+void random_large_initialize(list<Mass>& masslist) {
+}
+
+void random_small_initialize(list<Mass>& masslist) {
+}
+
+void grid_initialize(list<Mass>& masslist) {
+}
+
+void ring_initialize(list<Mass>& masslist) {
 }
 
 void draw_points(list<Mass> masslist){
