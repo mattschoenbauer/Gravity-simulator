@@ -25,6 +25,7 @@ void draw_points(list<Mass>);
 void update(list<Mass>&);
 void init(list<Mass>&);
 void batch_initialize(list<Mass>&);
+void random_initialize(list<Mass>&);
 
 /*
 int main(int argc, char *argv[]){
@@ -109,19 +110,14 @@ int main(int argc, char *argv[]){
 }
 
 void init(list<Mass>& masslist) {
-	Terminal term(wid/2, ht/2);
+	static Terminal term(wid/2, ht/2);
 	string entry = term.prompt("(i)nput initial condions, or (l)oad file? ", 'b');
 	if (entry.length() > 1) init(masslist);
 	else {
-		switch (entry[0]) {
-			case 'i':
-				interactive_initialize(masslist);
-				break;
-			case 'l':
-				batch_initialize(masslist);
-				break;
-			defalut: init(masslist);
-		}
+		char e = entry[0];
+		if (e == 'i') interactive_initialize(masslist);
+		else if (e == 'l') batch_initialize(masslist);
+		else init(masslist);
 	}
 }
 
@@ -152,6 +148,7 @@ void interactive_initialize(list<Mass>& masslist) {
 
         Mass m(center, mass, radius, v, a);
         masslist.push_back(m);
+		m.draw();
         c = term.prompt("Finished (y/n)? ", 'b')[0];
         if (c == 'y') finished = true;
     }
@@ -159,7 +156,11 @@ void interactive_initialize(list<Mass>& masslist) {
 
 void batch_initialize(list<Mass>& masslist) {
     Terminal term(wid/2, ht/2);
-	string filename = term.prompt("Enter a filename: ", 'b');//second command will be filename
+	string filename = term.prompt("Enter a filename (or rand for random): ", 'b');//second command will be filename
+	if (filename == "rand") {
+		random_initialize(masslist);
+		return;
+	}
 	ifstream ifs;
 	ifs.open(filename);
 	while(!ifs){
@@ -240,6 +241,9 @@ void batch_initialize(list<Mass>& masslist, istream& ifs){
 		masslist.push_back(m);
 		ifs >> cx;
 	}
+}
+
+void random_initialize(list<Mass>& masslist) {
 }
 
 void draw_points(list<Mass> masslist){
