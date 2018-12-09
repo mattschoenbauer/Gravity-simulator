@@ -85,6 +85,8 @@ bool Terminal::check_type(int e, char code) {
 			return (isalpha(e) || isdigit(e) || e == '.');
 		case 'd':
 			return (isdigit(e) || e == '-');
+		case 'p':
+			return (isdigit(e));
 		default: return true;
 	}
 }
