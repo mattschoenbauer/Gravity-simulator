@@ -14,8 +14,8 @@ class Terminal {
 		Terminal(int w, int h);
 		void print(const char* text);
 		void print(string text);
-		string prompt(const char* msg);
-		string prompt(string msg);
+		string prompt(const char* msg, char);
+		string prompt(string msg, char);
 		void set_font_size(short);
 		void terminal_clear();
 		int get_font_size(const char* text);
@@ -25,8 +25,9 @@ class Terminal {
 		short font_size;
 		int w, h;
 		const int tbgR = 0, tbgG = 0, tbgB = 0;
-		int prep_term(const char* text);
 		const int tween = 3;
+		int prep_term(const char* text);
+		bool check_type(int, char);
 };
 
 #endif
