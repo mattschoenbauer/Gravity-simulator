@@ -93,20 +93,20 @@ void interactive_initialize(list<Mass>& masslist) {
     double cx,cy,mass,radius;
     while (!finished) {
         term.print("Object " + to_string(count++)); // unsure if ++ comes after method call in precedence, I think this should work...
-        cx = atof(term.prompt("Input X Position Coordinate: ").c_str());
-        cy = atof(term.prompt("Input Y Position Coordinate: ").c_str());
+        cx = atof(term.prompt("Input X Position Coordinate: ", 'd').c_str());
+        cy = atof(term.prompt("Input Y Position Coordinate: ", 'd').c_str());
         center.x = cx + wid/2;
         center.y = cy + ht/2;
-        mass = atof(term.prompt("Input Mass: ").c_str());
-        radius = atof(term.prompt("Input Radius: ").c_str());
-        v.x = atof(term.prompt("Input X Velocity Coordinate: ").c_str());
-        v.y = atof(term.prompt("Input Y Velocity Coordinate: ").c_str());
-        a.x = atof(term.prompt("Input X Acceleration Coordinate: ").c_str());
-        a.y = atof(term.prompt("Input Y Acceleration Coordinate: ").c_str());
+        mass = atof(term.prompt("Input Mass: ", 'd').c_str());
+        radius = atof(term.prompt("Input Radius: ", 'd').c_str());
+        v.x = atof(term.prompt("Input X Velocity Coordinate: ", 'd').c_str());
+        v.y = atof(term.prompt("Input Y Velocity Coordinate: ", 'd').c_str());
+        a.x = atof(term.prompt("Input X Acceleration Coordinate: ", 'd').c_str());
+        a.y = atof(term.prompt("Input Y Acceleration Coordinate: ", 'd').c_str());
 
         Mass m(center, mass, radius, v, a);
         masslist.push_back(m);
-        c = term.prompt("Finished (y/n)? ")[0];
+        c = term.prompt("Finished (y/n)? ", 'a')[0];
         if (c == 'y') finished = true;
     }
 }
