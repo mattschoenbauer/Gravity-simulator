@@ -148,6 +148,7 @@ void interactive_initialize(list<Mass>& masslist) {
 
         Mass m(center, mass, radius, v, a);
         masslist.push_back(m);
+		m.draw();
         c = term.prompt("Finished (y/n)? ", 'b')[0];
         if (c == 'y') finished = true;
     }
