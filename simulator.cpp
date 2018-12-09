@@ -8,17 +8,16 @@
 #include "point_mass.h"
 #include "terminal.h"
 #include <cmath>
-#include <tgmath.h>
 #include <cstdlib>
 #include <list>
 using namespace std;
 
 #define PI 3.14159265
 
+// global constants that will be used across functions and depend on display
 const int wid=gfx_screenwidth();
 const int ht=gfx_screenheight();
 const int mrgn=gfx_screenheight()/20;
-// Terminal term(wid/2, ht/2);
 
 void interactive_initialize(list<Mass>&);
 void batch_initialize(list<Mass>&, istream&);
@@ -39,6 +38,7 @@ int main(){
 	list<Mass> masslist;
 	init(masslist);
 
+	// runs graphics environment
 	int n = 0;
 	while(true) {
 		draw_points(masslist);
@@ -46,10 +46,10 @@ int main(){
 		if(gfx_event_waiting()){
 			n = gfx_wait();
 			if (n == (int)'q') break;
-			if (n == (int)'r') {
+			if (n == 27) {
 				masslist.clear();
 				gfx_clear();
-				system("./grav");
+				system("./grav"); // NB: must build with included makefile
 				return 0;
 			}
 		}
@@ -61,8 +61,9 @@ int main(){
 }
 
 void init(list<Mass>& masslist) {
-	static Terminal term(wid/2, ht/2);
-//	gfx_color(255,255,255);
+	// initializes environment, and gathers user desires
+
+	static Terminal term(wid/2, ht/3);
 	string entry = term.prompt("(i)nput initial condions, or use (p)re-made initial conditions? ", 'b');
 	if (entry.length() > 1) init(masslist);
 	else {
@@ -74,9 +75,12 @@ void init(list<Mass>& masslist) {
 }
 
 void interactive_initialize(list<Mass>& masslist) {
+	// initializes environment in interactive mode
+	// gathers user input using a Terminal and draws to screen
+
     int wid = gfx_screenwidth();
     int ht = gfx_screenheight();
-    Terminal term(wid/2, ht/2); // configurable... account for desired size
+    Terminal term(wid/2, ht/3); // configurable... accounts for desired size
 
     string msg = "Screen dimension are " + to_string(wid) + " x " + to_string(ht) + ".";
     term.print(msg.c_str());
@@ -86,7 +90,7 @@ void interactive_initialize(list<Mass>& masslist) {
     Vect center, v, a(0,0);
     double cx,cy,mass,radius;
     while (!finished) {
-        term.print("Object " + to_string(count++)); // unsure if ++ comes after method call in precedence, I think this should work...
+        term.print("Object " + to_string(count++)); 
         cx = atof(term.prompt("Input X Position Coordinate: ", 'd').c_str());
         cy = atof(term.prompt("Input Y Position Coordinate: ", 'd').c_str());
         center.x = cx + wid/2;
@@ -95,8 +99,6 @@ void interactive_initialize(list<Mass>& masslist) {
         radius = atof(term.prompt("Input Radius: ", 'd').c_str());
         v.x = atof(term.prompt("Input X Velocity Coordinate: ", 'd').c_str());
         v.y = atof(term.prompt("Input Y Velocity Coordinate: ", 'd').c_str());
-        /* a.x = atof(term.prompt("Input X Acceleration Coordinate: ", 'd').c_str()); */
-        /* a.y = atof(term.prompt("Input Y Acceleration Coordinate: ", 'd').c_str()); */
 
         Mass m(center, mass, radius, v, a);
         masslist.push_back(m);
@@ -107,9 +109,14 @@ void interactive_initialize(list<Mass>& masslist) {
 }
 
 void batch_initialize(list<Mass>& masslist) {
-    Terminal term(wid/2, ht/2);
+	// initializes environment in batch mode
+	// in this mode the window is congigured using pre-existing conditions
+	
+    Terminal term(wid/2, ht/3);
 	bool not_cool = false;
 	ifstream ifs;
+
+	// menu
 	string s0= "Pre-made input options:";
 	string s1= "1: Large random objects";
 	string s2= "2: Small random objects";
@@ -119,8 +126,10 @@ void batch_initialize(list<Mass>& masslist) {
 	string s6= "6: Single-planet orbit";
 	string s7= "7: Multi-planet orbit";
 	string s8= "8: Neutron stars";
+
 	gfx_color(255,255,255);
 	do {
+		// print menu
 		term.print(s0);
 		term.print("    " + s1);
 		term.print("    " + s2);
@@ -131,6 +140,7 @@ void batch_initialize(list<Mass>& masslist) {
 		term.print("    " + s7);
 		term.print("    " + s8);
 		string filename = term.prompt("Enter premade initial conditions or filename: ", 'b');//second command will be filename
+
 		if (filename == "1") {
 			random_large_initialize(masslist);
 			return;
@@ -166,11 +176,13 @@ void batch_initialize(list<Mass>& masslist) {
 			not_cool = true;
 		}
 	} while (not_cool);
+
 	batch_initialize(masslist,ifs);
-	//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
 }
 
 void batch_initialize(list<Mass>& masslist, istream& ifs){
+	// processes data and objects to the master list
+	
 	int wid=gfx_screenwidth();
 	int ht=gfx_screenheight();
 	double cx, cy, mass, radius;
@@ -190,6 +202,7 @@ void batch_initialize(list<Mass>& masslist, istream& ifs){
 	}
 }
 
+/* Functions that generate pre-configured scenarios */
 void random_large_initialize(list<Mass>& masslist) {
 	const int num = 15;
 	for (int i = 0; i < num; i++) {
@@ -253,12 +266,15 @@ void two_ring_initialize(list<Mass>& masslist) {
     }
 }
 
-
+/* Update and manage window */
 void draw_points(list<Mass> masslist){
+	// draws all the masses
 	for(Mass m : masslist){m.draw();}
 }
 
 void update(list<Mass>& masslist){
+	// updates relative effect of gravity on each mass
+	
 	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
 		for(auto itr2 = next(itr,1); itr2 != masslist.end(); itr2++){
 			if((*itr).distance(*itr2) <= (*itr).getRadius() + (*itr2).getRadius()){
@@ -267,8 +283,6 @@ void update(list<Mass>& masslist){
 			}
 		}
 	}
-//	int count = 1;
-	//Now computing accelerations
 	Vect zero(0,0);
 	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
 		(*itr).setAccel(zero);
@@ -279,120 +293,7 @@ void update(list<Mass>& masslist){
 		}
 	}
 	for(auto itr = masslist.begin(); itr != masslist.end(); itr++){
-//		cout << "Updating Point " << count << endl;
 		(*itr).update();
-//		count++;
 	}
 }
-
-//void interactive_initialize(list<Mass>& masslist){
-//	int wid=gfx_screenwidth();
-//	int ht=gfx_screenheight();
-//	cout << "Screen dimension are " << wid << " x " << ht << ".\n";
-//	bool finished = false;
-//	char c;
-//	int count = 1;
-//	double cx, cy, vx, vy, ax, ay, mass, radius;
-//	Vect center;
-////	Vect accel(0,0);
-//	while(!finished){
-//		cout << "Object " << count << endl << endl;
-//		cout << "Input X Position Coordinate: ";
-//		cin >> cx;
-//		cout << endl;
-//		cout << "Input Y Position Coordinate: ";
-//		cin >> cy;
-//		cout << endl;
-//		center.x = cx+ wid /2;
-//		center.y = cy+ ht /2;
-//		cout << "Input Mass: ";
-//		cin >> mass;
-//		cout << endl;
-//		cout << "Input Radius: ";
-//		cin >> radius;
-//		cout << endl;
-//		cout << "Input X Velocity Coordinate: ";
-//		cin >> vx;
-//		cout << endl;
-//		cout << "Input Y Velocity Coordinate: ";
-//		cin >> vy;
-//		Vect veloc(vx,vy);
-//		cout << endl;
-//		cout << "Input X Acceleration Coordinate: ";
-//		cin >> ax;
-//		cout << endl;
-//		cout << "Input Y Acceleration Coordinate: ";
-//		cin >> ay;
-//		Vect accel(ax,ay);
-//		cout << endl;
-//		Mass m(center,mass,radius,veloc,accel);
-//		count++;
-//		masslist.push_back(m);
-//		cout << "Finished? ";
-//		cin >> c;
-//		cout << endl;
-//		if(c == 'y'){finished = true;}
-//	}
-//}
-/*
-int main(int argc, char *argv[]){
-
-	string option;
-	int wid=gfx_screenwidth();
-	int ht=gfx_screenheight();
-	gfx_open(wid,ht,"Gravity Simulator");
-
-	switch(argc){
-		case 1: option = "interactive";
-				break;
-
-		case 2: option = "batch";
-				break;
-
-		default: cout << "Too many arguments\n";
-				 return 0;
-	}
-
-
-	list<Mass> masslist;
-
-	if(option == "interactive"){
-		cout << "Entering interactive mode\n";
-		interactive_initialize(masslist);
-	}
-
-	if(option == "batch"){
-		string filename = argv[1];//second command will be filename
-		ifstream ifs;
-		ifs.open(filename);
-		while(!ifs){
-			cout << "Please input a valid file name\n";//Checking for a valid filename
-			cout << "Try again: ";
-			cin >> filename;
-			cout << endl;
-			ifs.open(filename);
-		}
-		gfx_open(wid,ht,"Gravity Simulator");
-		batch_initialize(masslist,ifs);
-		//		for(Mass m : masslist){ cout << m.getRadius() << endl;}
-	}
-
-	//Opening the window
-	int n = 0;
-
-	while(true) {
-		draw_points(masslist);
-		update(masslist);
-		if(gfx_event_waiting()){
-			n = gfx_wait();
-			if (n == (int)'q') break;
-		}
-		usleep(40000);
-		gfx_clear();
-	}
-
-	return 0;
-}
-*/
-
 
