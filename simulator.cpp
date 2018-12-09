@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "gfx3.h"
 #include "point_mass.h"
+#include "terminal.h"
 #include <cmath>
 #include <tgmath.h>
 #include <cstdlib>
