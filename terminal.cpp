@@ -21,7 +21,7 @@ void Terminal::print(const char* text) {
 }
 void Terminal::print(string text) { print(text.c_str()); }
 
-string Terminal::prompt(const char* msg) {
+string Terminal::prompt(const char* msg, char code) {
 	string entry;
 	int row = prep_term(msg);
 	int col = get_width(msg);
@@ -35,7 +35,7 @@ string Terminal::prompt(const char* msg) {
 			int e = (int)gfx_wait();
 			if (event == 2) {
 				if (e == 13) break;
-				if(isalpha(e) || isdigit(e)) entry += (char)e;
+				if(check_type(e,code)) entry += (char)e;
 				else if (e == 8) entry.pop_back();
 
 				gfx_color(tbgR,tbgG,tbgB);
@@ -50,7 +50,7 @@ string Terminal::prompt(const char* msg) {
 	} while (true);
 	return entry;
 }
-string Terminal::prompt(string msg) { return prompt(msg.c_str()); }
+string Terminal::prompt(string msg, char code) { return prompt(msg.c_str(), code); }
 
 int Terminal::prep_term(const char* text) {
 	/* return 14; */
@@ -68,4 +68,14 @@ int Terminal::prep_term(const char* text) {
 void Terminal::terminal_clear() {
 	gfx_color(tbgR, tbgG, tbgB);
 	gfx_fill_rectangle(0,0, w, h);
+}
+
+bool Terminal::check_type(int e, char code) {
+	switch (code) {
+		case 'b':
+			return (isalpha(e) || isdigit(e));
+		case 'd':
+			return (isdigit(e));
+		default: return true;
+	}
 }
